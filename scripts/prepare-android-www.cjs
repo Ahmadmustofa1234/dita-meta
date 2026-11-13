@@ -18,8 +18,6 @@ const files = [
   'kerang-bambu-3d.html',
   'manifest.webmanifest',
   'sw.js',
-  'vendor/three/build/three.module.js',
-  'vendor/three/examples/jsm/controls/PointerLockControls.js',
   'assets/ai_robot.png',
   'assets/bgm.mp3',
   'assets/materi-pdf/subbab-a.pdf',
@@ -39,5 +37,9 @@ for (const rel of files) {
   fs.copyFileSync(src, dst);
 }
 
-console.log(`Bundle offline Android (www/) siap: ${files.length} file.`);
+// Salin seluruh folder vendor/three agar semua loader (FBXLoader, GLTFLoader, PointerLockControls, fflate, dll.) tersedia offline
+const vendorSrc = path.join(root, 'vendor', 'three');
+const vendorDst = path.join(outDir, 'vendor', 'three');
+fs.cpSync(vendorSrc, vendorDst, { recursive: true });
 
+console.log(`Bundle offline Android (www/) siap: ${files.length} file + vendor/three.`);
