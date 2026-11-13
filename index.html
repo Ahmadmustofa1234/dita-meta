@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ecoseaverse — Metaverse Ekosistem Laut Madura</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b2239">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐬</text></svg>">
+  <meta name="description" content="Pelajari Bab 6 IPA Kelas VII melalui lima misi materi ekologi dan keanekaragaman hayati Indonesia dengan pre-test per subbab, serta post-test. Eksplorasi lorjuk tersedia di Virtual Lab.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ROTATE DEVICE OVERLAY FOR MOBILE PORTRAIT -->
+  <div id="rotate-device-overlay" class="rotate-device-overlay hidden" aria-live="polite">
+    <div class="rotate-card">
+      <div class="rotate-phone-anim">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <h3>Putar ke Mode Landscape 🔄</h3>
+      <p>Ecoseaverse dirancang optimal untuk tampilan mendatar (landscape) agar eksplorasi bawah laut dan kontrol joystick lebih leluasa.</p>
+      <div class="rotate-actions">
+        <button type="button" id="btn-force-landscape" class="btn-primary">
+          <i class="fa-solid fa-expand"></i> Kunci Mode Landscape
+        </button>
+        <button type="button" id="btn-dismiss-rotate" class="btn-secondary">
+          Tetap di Portrait
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo">
+        <i class="fa-solid fa-water"></i>
+        <h1>Ecoseaverse</h1>
+        <p>Ekosistem Laut Madura & Konservasi Bahari</p>
+      </div>
+      <div class="loading-bar-track">
+        <div class="loading-bar" id="loading-bar"></div>
+      </div>
+      <p id="loading-text" class="loading-status">Mempersiapkan dunia bawah laut Madura...</p>
+      <div class="loading-hint" id="loading-hint-desktop">
+        <i class="fa-solid fa-circle-info"></i>
+        Gunakan <kbd>WASD</kbd> bergerak &nbsp;·&nbsp; <kbd>Mouse</kbd> arah &nbsp;·&nbsp; <kbd>E</kbd> masuk misi &nbsp;·&nbsp; <kbd>F</kbd> bersihkan sampah &nbsp;·&nbsp; <kbd>Space</kbd> berenang naik
+      </div>
+      <div class="loading-hint loading-hint-mobile" id="loading-hint-mobile" style="display:none;">
+        <i class="fa-solid fa-circle-info"></i>
+        Gunakan <strong>joystick virtual</strong> untuk bergerak &nbsp;·&nbsp; <strong>Tombol aksi</strong> untuk interaksi
+      </div>
+    </div>
+    <div class="loading-waves">
+      <div class="lwave lwave-1"></div>
+      <div class="lwave lwave-2"></div>
+      <div class="lwave lwave-3"></div>
+    </div>
+    <div class="loading-bubbles" id="loading-bubbles"></div>
+  </div>
+
+  <!-- 3D CANVAS -->
+  <canvas id="metaverse-canvas"></canvas>
+
+  <!-- DAMAGE OVERLAY -->
+  <div id="damage-overlay" class="damage-overlay hidden"></div>
+
+  <!-- CROSSHAIR -->
+  <div id="crosshair" class="crosshair hidden">
+    <div class="xhair-ring"></div>
+    <div class="xhair-dot"></div>
+  </div>
+
+  <!-- FOREST VIGNETTE -->
+  <div id="underwater-overlay" class="underwater-overlay"></div>
+
+  <!-- AI BIO-SCANNER 3D AR LABELS -->
+  <div id="bio-scanner-container" class="bio-scanner-container"></div>
+
+  <!-- OBJECTIVE TRACKER -->
+  <div id="hud-objective" class="hud-objective hidden">
+    <i class="fa-solid fa-location-crosshairs"></i>
+    <div class="obj-text">
+      <span class="obj-label">Tujuan Saat Ini:</span>
+      <strong id="obj-name">Memuat...</strong>
+    </div>
+    <div id="obj-dist" class="obj-dist">0m</div>
+    <button id="btn-enter-mission" class="btn-enter-mission" title="Klik untuk Langsung Masuk Misi">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      <span>Masuk Misi</span>
+    </button>
+  </div>
+
+  <!-- HUD TOP BAR -->
+  <header id="hud-top" class="hud-top hidden">
+    <div class="hud-brand">
+      <i class="fa-solid fa-water"></i>
+      <span>Ecoseaverse</span>
+    </div>
+
+    <div class="hud-scores">
+      <div class="hud-stat" title="Literasi Sains">
+        <i class="fa-solid fa-flask-vial"></i>
+        <span>Sains</span>
+        <strong id="hud-science">0</strong>
+      </div>
+      <div class="hud-stat" title="Peduli Lingkungan">
+        <i class="fa-solid fa-heart-pulse"></i>
+        <span>Peduli</span>
+        <strong id="hud-care">0</strong>
+      </div>
+      <div class="hud-stat hud-health-wrap" title="Kesehatan Ekosistem Laut">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Ekosistem</span>
+        <div class="mini-bar"><div id="hud-health-bar" class="mini-bar-fill"></div></div>
+        <strong id="hud-health-num">35</strong>
+      </div>
+      <div class="hud-stat" title="Badge Bahari">
+        <i class="fa-solid fa-star"></i>
+        <span>Badge</span>
+        <strong id="hud-badges">0/3</strong>
+      </div>
+      <div class="hud-stat" title="Total Poin Misi">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Poin</span>
+        <strong id="hud-points">0</strong>
+      </div>
+    </div>
+
+    <div class="hud-depth">
+      <i class="fa-solid fa-water"></i>
+      <span id="hud-depth-label">Permukaan Laut Madura</span>
+    </div>
+
+    <div class="hud-actions">
+      <button id="btn-open-materi" class="hud-btn-view hud-btn-materi" title="Buka Materi Bab 6: Subbab A-E" aria-controls="materi-modal" aria-haspopup="dialog">
+        <i class="fa-solid fa-book-open-reader"></i>
+        <span>Materi Ekologi</span>
+      </button>
+      <button id="btn-open-clam" class="hud-btn-view hud-btn-beach" title="Virtual Lab Lorjuk · Eksplorasi tambahan di luar misi" aria-controls="clam-modal" aria-haspopup="dialog">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Virtual Lab</span>
+      </button>
+      <button id="btn-teleport-beach" class="hud-btn-view hud-btn-beach" title="Kembali ke Kawasan Pantai Kelapa Madura">
+        <i class="fa-solid fa-umbrella-beach"></i>
+        <span>Ke Pantai</span>
+      </button>
+      <button id="btn-view-features" class="hud-btn-view" title="Fitur Tampilan & Suasana Laut">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Fitur Tampilan</span>
+      </button>
+      <button id="btn-open-chatbot" class="hud-btn-view" title="Buka Chatbot Ekologi untuk bertanya materi">
+        <i class="fa-solid fa-comments"></i>
+        <span>Chatbot Ekologi</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HUD LEFT: MISSION MAP -->
+  <aside id="hud-missions" class="hud-missions hidden">
+    <div class="hud-missions-title">
+      <i class="fa-solid fa-list-check"></i>
+      <span>Misi Bab 6</span>
+      <span id="hud-progress-label" class="hud-prog-label">0/6</span>
+    </div>
+    <div id="hud-mission-list" class="hud-mission-list"></div>
+    <div class="learning-sidebar-footer">
+      <p id="learner-participant" class="learner-participant">Peserta belum masuk</p>
+      <p id="learner-avatar">Peran penjaga belum dipilih</p>
+      <button type="button" id="btn-switch-participant" class="btn-secondary">Ganti Peserta</button>
+      <small>6 misi pembelajaran diselesaikan dalam 8 pertemuan / 4 hari. Progres tersimpan per peserta.</small>
+    </div>
+  </aside>
+
+  <!-- HUD BOTTOM: AI MARINE SEBAGAI PEMANDU JALAN MISI -->
+  <div id="ai-guardian" class="ai-guardian hidden">
+    <div class="ai-avatar" id="ai-avatar-btn" title="Tampilkan atau sembunyikan pemandu misi">
+      <img src="assets/ai_robot.png" alt="AI Marine Guardian">
+      <div class="ai-ping"></div>
+    </div>
+    <div class="ai-bubble" id="ai-bubble">
+      <div class="ai-bubble-header">
+        <i class="fa-solid fa-compass"></i>
+        <strong>AI Marine · Pemandu Misi</strong>
+        <span id="ai-guide-step" class="ai-guide-step">Langkah 1/6</span>
+        <button class="ai-close-btn" id="ai-close-btn" title="Kecilkan"><i class="fa-solid fa-chevron-down"></i></button>
+      </div>
+      <p id="ai-text">Mulai di Gerbang Laut Madura. Pilih satu peran penjaga untuk membuka perjalanan misi.</p>
+      <button type="button" id="btn-guide-next" class="btn-guide-next">
+        <i class="fa-solid fa-compass"></i> Arahkan ke Misi 1
+      </button>
+    </div>
+  </div>
+
+  <!-- CHATBOT TERPISAH UNTUK PERTANYAAN MATERI -->
+  <aside id="ai-chat-panel" class="ai-chat-panel hidden" role="dialog" aria-labelledby="chat-panel-title">
+    <div class="chat-header">
+      <div class="chat-title-group">
+        <div class="chat-robot-avatar">
+          <img src="assets/ai_robot.png" alt="EcoBot">
+        </div>
+        <div>
+          <h4 id="chat-panel-title">Chatbot Ekologi</h4>
+          <span class="chat-badge-status"><i class="fa-solid fa-circle"></i> EcoBot · Mentor Materi</span>
+        </div>
+      </div>
+      <button type="button" id="chat-close-btn" class="chat-close-btn" title="Tutup Chat" aria-label="Tutup Chat">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="chat-guardrail-banner">
+      <i class="fa-solid fa-shield-halved"></i> Khusus materi IPA 7 Bab 6 & Ekosistem Laut Madura
+    </div>
+
+    <div id="chat-messages" class="chat-messages">
+      <div class="chat-msg chat-msg-bot">
+        <div class="chat-msg-avatar">🤖</div>
+        <div class="chat-bubble">
+          <p>Halo penjelajah laut! Aku <strong>EcoBot</strong>, chatbot materi. Tanyakan ekosistem laut Madura, rantai makanan, lorjuk, atau materi IPA Bab 6.</p>
+          <div class="chat-chips-group">
+            <button type="button" class="chat-chip" data-query="Apa peran kerang bambu (lorjuk) dalam ekosistem laut?">🦪 Peran Lorjuk</button>
+            <button type="button" class="chat-chip" data-query="Bagaimana rantai makanan di laut Madura?">🐠 Rantai Makanan</button>
+            <button type="button" class="chat-chip" data-query="Apa perbedaan komponen biotik dan abiotik laut?">🌊 Biotik vs Abiotik</button>
+            <button type="button" class="chat-chip" data-query="Mengapa sampah plastik berbahaya bagi kerang dan laut?">⚠️ Bahaya Plastik</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="chat-form" class="chat-form">
+      <input type="text" id="chat-input" class="chat-input" placeholder="Ketik pertanyaan materi laut..." autocomplete="off" maxlength="300" required>
+      <button type="submit" id="chat-submit-btn" class="chat-submit-btn" title="Kirim pertanyaan">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </form>
+  </aside>
+
+  <!-- ZONE ENTER PROMPT -->
+  <div id="zone-prompt" class="zone-prompt hidden">
+    <i class="fa-solid fa-water"></i>
+    <span>Tekan <kbd>E</kbd> untuk masuk misi</span>
+    <span id="zone-prompt-name" class="zone-name"></span>
+  </div>
+
+   <!-- Pintu Virtual Lab, terpisah dari alur misi -->
+  <div id="clam-prompt" class="zone-prompt clam-prompt hidden">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span>Buka Virtual Lab</span>
+    <span class="zone-name">Eksplorasi tambahan</span>
+  </div>
+
+  <!-- DIVE PROMPT -->
+  <div id="dive-prompt" class="dive-prompt hidden">
+    <i class="fa-solid fa-arrows-up-down"></i>
+    <span id="dive-prompt-text">Tekan <kbd>Space</kbd> berenang ke atas · <kbd>Shift</kbd> menyelam ke bawah</span>
+  </div>
+
+  <!-- MISSION POPUP -->
+  <div id="mission-popup" class="mission-popup hidden" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <div class="mission-popup-inner">
+
+      <button id="mission-close" class="popup-close-btn" title="Tutup">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="popup-header">
+        <div class="popup-eyebrow" id="popup-eyebrow">
+          <i class="fa-solid fa-map-pin"></i> Peran Penjaga
+        </div>
+        <h2 id="popup-title" tabindex="-1">Pilih Peran Penjaga</h2>
+        <p id="popup-description">Masuki dunia Ecoseaverse...</p>
+      </div>
+
+      <!-- AI Panel -->
+      <div class="popup-ai-panel">
+        <img src="assets/ai_robot.png" alt="AI Marine Guardian" class="popup-ai-img">
+        <div>
+          <div class="popup-ai-name">
+            <i class="fa-solid fa-robot"></i> AI Marine Guardian
+          </div>
+          <p id="popup-ai-msg">Selamat datang di Laut Madura!</p>
+        </div>
+      </div>
+
+      <!-- Character Value -->
+      <div class="popup-char-value" id="popup-char-value">
+        <i class="fa-solid fa-heart"></i>
+        <span id="popup-char-text">Karakter: Peduli Lingkungan Bahari</span>
+      </div>
+
+      <!-- Quick Access Materi Ekologi Banner -->
+      <div class="popup-materi-banner" id="popup-materi-banner">
+        <div class="popup-materi-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="popup-materi-info">
+          <strong>Ingin Mempelajari Materi Dulu?</strong>
+          <span id="popup-materi-hint">Buka modul materi ekologi terkait misi ini sebelum menjawab aktivitas evaluasi.</span>
+        </div>
+        <button type="button" id="btn-popup-open-materi" class="btn-popup-materi" title="Pelajari materi ekologi bab terkait">
+          <i class="fa-solid fa-book-open"></i>
+          <span>Pelajari Materi</span>
+        </button>
+      </div>
+
+      <!-- Task Area -->
+      <div class="popup-task">
+        <h3 id="popup-task-title" tabindex="-1">
+          <i class="fa-solid fa-bullseye"></i> Aktivitas Bahari
+        </h3>
+        <div id="popup-task-area"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="popup-footer">
+        <div id="popup-badge-row" class="popup-badge-row">
+          <span id="popup-points" class="badge-icon"><i class="fa-solid fa-trophy"></i> +100 Poin</span>
+        </div>
+        <button id="popup-action" class="btn-primary" disabled>
+          <i class="fa-solid fa-arrow-right"></i>
+          Mulai Misi
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KERANG BAMBU OBSERVATION MODAL -->
+  <div id="clam-modal" class="mission-popup clam-modal hidden" role="dialog" aria-modal="true" aria-labelledby="clam-title">
+    <div class="mission-popup-inner clam-modal-inner">
+      <button id="clam-close" class="popup-close-btn" title="Tutup" aria-label="Tutup laboratorium kerang bambu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="popup-header clam-header">
+        <div class="popup-eyebrow">
+          <i class="fa-solid fa-certificate"></i> Laboratorium Interaktif Pesisir Madura
+        </div>
+        <h2 id="clam-title">Virtual Lab: Kerang Bambu (Lorjuk) — <em>Solen</em> sp.</h2>
+        <p>Eksplorasi tambahan di luar Misi 1–7. Mengapa hasil panen lorjuk berubah menurut waktu? Selidiki kondisi lingkungan melalui model 3D dan lima tahap PBL; kegiatan lab tidak memengaruhi nilai pre-test, misi, atau post-test.</p>
+      </div>
+
+      <div class="clam-lab-content">
+        <p id="clam-lab-status" class="clam-lab-status" role="status">Memuat laboratorium kerang bambu...</p>
+        <iframe id="clam-lab-frame" class="clam-lab-frame" data-src="kerang-bambu-3d.html" title="Laboratorium Lorjuk: masalah musiman, tahapan PBL 7a, model 3D, dan kuis" allow="fullscreen" allowfullscreen></iframe>
+      </div>
+
+      <div class="popup-footer">
+        <div class="clam-footer-tip">
+          <i class="fa-solid fa-hand-pointer"></i> Buka Masalah lorjuk, lalu ikuti 7a · Tahapan PBL.
+        </div>
+        <button id="clam-action-btn" class="btn-primary">
+          <i class="fa-solid fa-check"></i> Kembali ke Laut
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FITUR TAMPILAN MODAL -->
+  <div id="view-modal" class="mission-popup view-modal hidden">
+    <div class="mission-popup-inner view-modal-inner">
+      <button id="view-close" class="popup-close-btn" title="Tutup">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="popup-header">
+        <div class="popup-eyebrow">
+          <i class="fa-solid fa-sliders"></i> Pengaturan & Visual Bahari
+        </div>
+        <h2>Fitur Tampilan & Suasana Laut</h2>
+        <p>Sesuaikan suasana laut Madura, sudut pandang kamera, dan AI Bio-Scanner sesuai kenyamanan Anda.</p>
+      </div>
+
+      <div class="view-settings-grid">
+        <!-- 1. Suasana / Waktu Laut -->
+        <div class="view-setting-card">
+          <div class="setting-title"><i class="fa-solid fa-sun"></i> Suasana & Pencahayaan Laut</div>
+          <div class="setting-options" id="opt-lighting-mode">
+            <button class="opt-btn active" data-mode="day">
+              <i class="fa-solid fa-sun"></i>
+              <strong>Siang Tropis Cerah</strong>
+              <small>Matahari cerah, jernih & tembus ke dasar pasir</small>
+            </button>
+            <button class="opt-btn" data-mode="sunset">
+              <i class="fa-solid fa-cloud-sun"></i>
+              <strong>Senja Keemasan</strong>
+              <small>Cahaya hangat pesisir pantai Madura</small>
+            </button>
+            <button class="opt-btn" data-mode="crystal">
+              <i class="fa-solid fa-water"></i>
+              <strong>Pagi Kristal Tropis</strong>
+              <small>Fajar cerah menyinari pesisir & air kristal jernih</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Sudut Pandang Kamera -->
+        <div class="view-setting-card">
+          <div class="setting-title"><i class="fa-solid fa-video"></i> Sudut Pandang Kamera</div>
+          <div class="setting-options" id="opt-camera-mode">
+            <button class="opt-btn active" data-cam="diver">
+              <i class="fa-solid fa-person-swimming"></i>
+              <strong>Penyelam (1st Person)</strong>
+              <small>Imersif serasa menyelam langsung</small>
+            </button>
+            <button class="opt-btn" data-cam="wide">
+              <i class="fa-solid fa-binoculars"></i>
+              <strong>Pandangan Luas</strong>
+              <small>FOV lebar untuk panorama bawah laut</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. AI Bio-Scanner (Label Nama Ilmiah Biota) -->
+        <div class="view-setting-card">
+          <div class="setting-title"><i class="fa-solid fa-barcode"></i> AI Bio-Scanner 3D</div>
+          <div class="setting-options" id="opt-scanner-mode">
+            <button class="opt-btn active" data-scanner="on">
+              <i class="fa-solid fa-eye"></i>
+              <strong>Aktif</strong>
+              <small>Label nama ilmiah biota melayang di 3D</small>
+            </button>
+            <button class="opt-btn" data-scanner="off">
+              <i class="fa-solid fa-eye-slash"></i>
+              <strong>Nonaktif</strong>
+              <small>Hanya pemandangan laut alami</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Mode Performa / Kualitas Grafis -->
+        <div class="view-setting-card">
+          <div class="setting-title"><i class="fa-solid fa-gauge-high"></i> Kualitas & Performa HP</div>
+          <div class="setting-options" id="opt-quality-mode">
+            <button class="opt-btn" id="btn-qual-eco" data-quality="eco">
+              <i class="fa-solid fa-bolt"></i>
+              <strong>Hemat Daya HP</strong>
+              <small>Paling ringan, 60 FPS stabil di smartphone</small>
+            </button>
+            <button class="opt-btn active" id="btn-qual-hd" data-quality="hd">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <strong>Kualitas Ultra HD</strong>
+              <small>Bayangan detail & partikel maksimal</small>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="popup-footer">
+        <button id="view-apply-btn" class="btn-primary">
+          <i class="fa-solid fa-check"></i> Tutup & Lanjutkan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MATERI EKOLOGI INTERAKTIF MODAL (IPA 7 KURIKULUM MERDEKA) -->
+  <div id="materi-modal" class="mission-popup materi-modal hidden" role="dialog" aria-modal="true" aria-labelledby="materi-modal-title">
+    <div class="mission-popup-inner materi-modal-inner">
+      <button id="materi-close" class="popup-close-btn" title="Tutup Modul Materi" aria-label="Tutup Modul Materi">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Header Materi -->
+      <div class="popup-header materi-header">
+        <div class="popup-eyebrow">
+          <i class="fa-solid fa-book-open-reader"></i> Modul IPA SMP Kelas VII · Kurikulum Merdeka
+        </div>
+        <h2 id="materi-modal-title">Pustaka Sains: Ekologi & Keanekaragaman Hayati</h2>
+        <p>Bab 6: Ekologi dan Keanekaragaman Hayati Indonesia. Pilih avatar di Misi 1 pada Gerbang Laut Madura. Pada Misi 2–6, kerjakan pre-test, pelajari materi Subbab A–E, lalu selesaikan post-test. Rujukan: buku IPA SMP Kelas VII, Inabuy dkk., Kemendikbudristek (2021), halaman 162–185.</p>
+
+        <!-- Toolbar: Search & TTS Voice AI -->
+        <div class="materi-toolbar">
+          <div class="materi-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="materi-search-input" placeholder="Cari topik: cahaya, rantai makanan, fauna, konservasi..." aria-label="Cari materi ekologi">
+          </div>
+          <button type="button" id="btn-materi-tts" class="materi-tts-btn" title="Dengarkan pembacaan ringkasan oleh AI Marine Guardian">
+            <i class="fa-solid fa-volume-high"></i>
+            <span>Dengarkan AI</span>
+          </button>
+          <button type="button" class="materi-chat-trigger" data-open-material-chat>
+            <i class="fa-solid fa-comments"></i>
+            <span>Tanya EcoBot sambil membaca</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Materi A–E dirender dari learning-data.js agar sesuai dengan misi. -->
+      <nav class="materi-tabs" id="materi-tabs" role="tablist" aria-label="Subbab A sampai E pada Bab 6"></nav>
+      <div class="materi-body" id="materi-body"></div>
+
+      <!-- Footer Navigasi Materi -->
+      <div class="popup-footer materi-footer">
+        <div class="materi-footer-nav">
+          <button type="button" id="btn-materi-prev" class="btn-secondary" disabled>
+            <i class="fa-solid fa-chevron-left"></i> Subbab Sebelumnya
+          </button>
+          <span id="materi-page-indicator" class="materi-page-indicator">Subbab A · 1 dari 5</span>
+          <button type="button" id="btn-materi-next" class="btn-secondary">
+            Subbab Berikutnya <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <button id="materi-action-btn" class="btn-primary">
+          <i class="fa-solid fa-check"></i> Tutup & Lanjutkan Eksplorasi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- START / CONTROLS OVERLAY -->
+  <div id="start-overlay" class="start-overlay" style="display:none;">
+      <div class="start-content">
+        <div class="start-logo">
+        <i class="fa-solid fa-water"></i>
+        <h1>Ecoseaverse</h1>
+        <p>Metaverse Ekosistem Laut Madura Berbasis AI · Jelajahi · Pelajari · Lestarikan</p>
+      </div>
+
+        <form id="participant-login" class="participant-login" novalidate>
+          <div class="participant-login-row participant-login-fields">
+            <label for="participant-school">Nama sekolah
+              <input id="participant-school" name="participant-school" type="text" maxlength="100" autocomplete="organization" placeholder="Tulis nama sekolah" required>
+            </label>
+            <label for="participant-name">Nama siswa
+              <input id="participant-name" name="participant-name" type="text" maxlength="40" autocomplete="name" placeholder="Tulis nama siswa" required>
+            </label>
+          </div>
+          <p id="participant-login-status">Masukkan nama sekolah dan nama siswa untuk memulai atau membuka progres tersimpan. Pre-test 10 soal tersedia setelah materi di setiap misi.</p>
+        </form>
+
+        <!-- Desktop Controls -->
+        <div class="controls-grid" id="desktop-controls">
+        <div class="ctrl-item">
+          <div class="key-cluster">
+            <div class="key-row"><kbd>W</kbd></div>
+            <div class="key-row"><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+          </div>
+          <span><i class="fa-solid fa-person-swimming"></i> Berenang</span>
+        </div>
+
+        <div class="ctrl-item">
+          <kbd class="key-wide"><i class="fa-solid fa-computer-mouse"></i> Mouse</kbd>
+          <span><i class="fa-solid fa-eye"></i> Lihat Arah</span>
+        </div>
+        <div class="ctrl-item">
+          <kbd class="key-wide">Space / Shift</kbd>
+          <span><i class="fa-solid fa-arrows-up-down"></i> Naik / Menyelam</span>
+        </div>
+        <div class="ctrl-item">
+          <kbd>E</kbd>
+          <span><i class="fa-solid fa-water"></i> Masuk Misi</span>
+        </div>
+        <div class="ctrl-item">
+          <kbd>HUD</kbd>
+          <span><i class="fa-solid fa-magnifying-glass"></i> Virtual Lab</span>
+        </div>
+        <div class="ctrl-item">
+          <kbd class="key-wide">Klik Kiri / F</kbd>
+          <span><i class="fa-solid fa-recycle"></i> Bersihkan Kotoran Laut</span>
+        </div>
+      </div>
+
+      <!-- Mobile Controls Info -->
+      <div class="mobile-controls-info" id="mobile-controls-info" style="display:none;">
+        <div class="mobile-ctrl-grid">
+          <div class="mobile-ctrl-item">
+            <i class="fa-solid fa-arrows-up-down-left-right"></i>
+            <span>Joystick Kiri</span>
+            <small>Bergerak</small>
+          </div>
+          <div class="mobile-ctrl-item">
+            <i class="fa-solid fa-hand-pointer"></i>
+            <span>Swipe Layar</span>
+            <small>Lihat Arah</small>
+          </div>
+          <div class="mobile-ctrl-item">
+            <i class="fa-solid fa-water"></i>
+            <span>Tombol Biru</span>
+            <small>Masuk Misi</small>
+          </div>
+          <div class="mobile-ctrl-item">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Tombol Kuning</span>
+            <small>Bersihkan Sampah</small>
+          </div>
+        </div>
+      </div>
+
+      <button id="start-btn" class="btn-start" type="button">
+        <i class="fa-solid fa-play"></i>
+        Mulai Menjelajah
+      </button>
+      <p class="start-hint" id="start-hint-desktop">
+        <i class="fa-solid fa-circle-info"></i>
+        Klik tombol di atas lalu gerakkan mouse bebas untuk melihat ke semua arah
+      </p>
+      <p class="start-hint" id="start-hint-mobile" style="display:none;">
+        <i class="fa-solid fa-circle-info"></i>
+        Gunakan joystick dan tombol virtual yang muncul di layar untuk bermain
+      </p>
+    </div>
+  </div>
+
+  <!-- MOBILE TOUCH CONTROLS - Virtual Joystick -->
+  <div id="virtual-joystick" class="virtual-joystick hidden">
+    <div class="joystick-base" id="joystick-base">
+      <div class="joystick-knob" id="joystick-knob">
+        <i class="fa-solid fa-arrows-up-down-left-right"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Action Buttons -->
+  <div id="mobile-actions" class="mobile-actions hidden">
+    <button class="mob-btn mob-btn-mission" id="mob-btn-e" title="Masuk Misi">
+      <i class="fa-solid fa-water"></i>
+    </button>
+    <button class="mob-btn mob-btn-clam" id="mob-btn-f" title="Virtual Lab" aria-label="Buka Virtual Lab Lorjuk" aria-controls="clam-modal" aria-haspopup="dialog">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span class="mob-btn-label" aria-hidden="true">LAB</span>
+    </button>
+    <button class="mob-btn mob-btn-materi" id="mob-btn-materi" title="Materi Bab 6 (Subbab A-E)" aria-label="Buka materi Bab 6" aria-controls="materi-modal" aria-haspopup="dialog">
+      <i class="fa-solid fa-book-open-reader"></i>
+    </button>
+    <button class="mob-btn mob-btn-shoot" id="mob-btn-shoot" title="Bersihkan Sampah & Kotoran Laut">
+      <i class="fa-solid fa-bolt"></i>
+    </button>
+    <button class="mob-btn mob-btn-up" id="mob-btn-up" title="Terbang Atas">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+    <button class="mob-btn mob-btn-down" id="mob-btn-down" title="Turun">
+      <i class="fa-solid fa-arrow-down"></i>
+    </button>
+    <button class="mob-btn mob-btn-view" id="mob-btn-view" title="Fitur Tampilan">
+      <i class="fa-solid fa-sliders"></i>
+    </button>
+    <button class="mob-btn mob-btn-beach" id="mob-btn-beach" title="Ke Pantai Kelapa">
+      <i class="fa-solid fa-umbrella-beach"></i>
+    </button>
+  </div>
+
+  <!-- ERROR HANDLER -->
+  <script src="error-handler.js"></script>
+
+  <!-- MAIN MODULE -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/build/three.module.js",
+        "three/addons/": "./vendor/three/examples/jsm/",
+        "learning": "./learning.js"
+      }
+    }
+  </script>
+  <script type="module">
+    const loadingText = document.getElementById('loading-text');
+
+    // Detect mobile device. Browser desktop (termasuk laptop sentuhan) bisa
+    // melaporkan maxTouchPoints > 0, jadi pointer coarse + lebar layar jadi penentu.
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const isPhoneUA = /iPhone|iPod|Android.*Mobile/i.test(navigator.userAgent);
+    const isTabletUA = /iPad|Android(?!.*Mobile)|Tablet|Silk|Kindle/i.test(navigator.userAgent);
+    const isCompactTouchViewport = navigator.maxTouchPoints > 0 && (hasCoarsePointer || window.innerWidth <= 1100);
+    window.isMobileDevice = isPhoneUA || isTabletUA || isCompactTouchViewport;
+    if (window.isMobileDevice) {
+      document.body.classList.add('is-mobile-device');
+      document.getElementById('loading-hint-desktop').style.display = 'none';
+      document.getElementById('loading-hint-mobile').style.display = 'flex';
+    }
+
+    if ('serviceWorker' in navigator && (window.isSecureContext || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('[Ecoseaverse] Service Worker gagal terdaftar:', err);
+        });
+      });
+    }
+
+    function setLoadingText(message) {
+      if (loadingText) loadingText.textContent = message;
+    }
+
+    function showBootError(message) {
+      setLoadingText(message);
+      const bar = document.getElementById('loading-bar');
+      if (bar) bar.style.width = '100%';
+    }
+
+    async function boot() {
+      if (window.location.protocol === 'file:') {
+        showBootError('Buka game lewat server lokal: jalankan npm run dev, lalu akses http://localhost:3000.');
+        return;
+      }
+
+      try {
+        setLoadingText('Mempersiapkan dunia bawah laut...');
+        await import('./metaverse.js?v=20261101-grokchat');
+      } catch (error) {
+        console.error('[Ecoseaverse] Game gagal dimulai:', error);
+        showBootError('Game gagal dimulai. Periksa koneksi ke server, kelengkapan file game dan folder vendor/three, lalu muat ulang. Detail error tersedia di Console (F12).');
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

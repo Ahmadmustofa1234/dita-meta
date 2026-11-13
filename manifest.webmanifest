@@ -1,0 +1,27 @@
+{
+  "name": "Ecoseaverse — Metaverse Ekosistem Laut Madura",
+  "short_name": "Ecoseaverse",
+  "description": "Game edukasi 3D Bab 6 IPA Kelas VII: Ekologi, keanekaragaman hayati Indonesia, dan konservasi laut Madura.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#050f1e",
+  "theme_color": "#0b2239",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "./assets/ai_robot.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/ai_robot.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
+

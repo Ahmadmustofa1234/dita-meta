@@ -1,0 +1,24 @@
+{
+  "name": "ecoseaverse",
+  "version": "1.0.0",
+  "description": "Ecoseaverse - Metaverse Ekosistem Laut Madura Berbasis AI",
+  "main": "index.html",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "vendor": "node scripts/vendor-three.cjs"
+  },
+  "devDependencies": {
+    "three": "0.158.0"
+  },
+  "keywords": [
+    "metaverse",
+    "threejs",
+    "marine-ecosystem",
+    "madura",
+    "kerang-bambu",
+    "education"
+  ],
+  "author": "Tim Ecoseaverse",
+  "license": "MIT"
+}

@@ -1,0 +1,14 @@
+node_modules/
+.private/
+.env
+www/
+scratch/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+nul
+database.sqlite
+videos/
+videos_raw/
+assets/3d/

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#071a2c">
+  <title>Admin Evaluasi · Ecoseaverse</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #e8f4fb;
+      background: #071724;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --surface: #0c2030;
+      --surface-raised: #10283a;
+      --border: rgba(159, 199, 222, .13);
+      --muted: #91aaba;
+      --cyan: #67d8df;
+      --green: #63d7aa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 82% -15%, rgba(33, 134, 153, .19), transparent 40rem),
+        radial-gradient(ellipse at 5% 48%, rgba(24, 93, 120, .11), transparent 36rem),
+        #071724;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    .hidden { display: none !important; }
+    .topbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 max(26px, calc((100vw - 1180px) / 2));
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 23, 36, .72);
+      backdrop-filter: blur(18px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand-mark {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border: 1px solid rgba(103, 216, 223, .27); border-radius: 12px;
+      color: var(--cyan); background: rgba(56, 189, 198, .1);
+    }
+    .brand-name { display: grid; gap: 2px; font-size: 14px; font-weight: 750; letter-spacing: .01em; }
+    .brand-name small { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .14em; }
+    .topbar-link {
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px;
+      border: 1px solid var(--border); border-radius: 10px; color: #c4d6e1;
+      font-size: 12px; font-weight: 650; text-decoration: none; transition: .18s ease;
+    }
+    .topbar-link:hover { border-color: rgba(103, 216, 223, .4); color: var(--cyan); background: rgba(103, 216, 223, .06); }
+    main { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 54px 0 42px; }
+    .hero { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 30px; }
+    .eyebrow { margin: 0 0 11px; color: var(--cyan); font-size: 11px; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(29px, 4vw, 39px); line-height: 1.15; letter-spacing: -.04em; }
+    .hero-copy { max-width: 610px; margin: 12px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .secure-pill { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid rgba(99, 215, 170, .2); border-radius: 999px; color: #a6e9cb; background: rgba(54, 166, 122, .09); font-size: 11px; font-weight: 700; }
+    .secure-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px rgba(99, 215, 170, .65); }
+    .status { min-height: 0; margin: 0 0 18px; color: #ffd18b; font-size: 13px; line-height: 1.55; }
+    .status:not(:empty) { padding: 12px 15px; border: 1px solid rgba(255, 190, 100, .2); border-radius: 12px; background: rgba(166, 105, 34, .1); }
+    .panel { border: 1px solid var(--border); border-radius: 18px; background: linear-gradient(145deg, rgba(15, 40, 58, .92), rgba(10, 29, 44, .96)); box-shadow: 0 18px 50px rgba(0, 0, 0, .13); }
+    .login-panel { width: min(480px, 100%); margin: 48px auto 0; padding: 30px; }
+    .login-icon { width: 44px; height: 44px; display: grid; place-items: center; margin-bottom: 20px; border: 1px solid rgba(103, 216, 223, .22); border-radius: 14px; color: var(--cyan); background: rgba(103, 216, 223, .08); }
+    .login-panel h2 { margin: 0; font-size: 21px; letter-spacing: -.02em; }
+    .login-panel > p { margin: 9px 0 24px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    form { display: grid; gap: 13px; }
+    label { display: grid; gap: 8px; color: #cbd9e2; font-size: 12px; font-weight: 650; }
+    input {
+      width: 100%; min-height: 45px; padding: 0 13px;
+      border: 1px solid rgba(159, 199, 222, .2); border-radius: 10px;
+      outline: none; color: #f0f7fb; background: rgba(4, 17, 27, .7);
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    input::placeholder { color: #718b9c; }
+    input:focus { border-color: rgba(103, 216, 223, .72); box-shadow: 0 0 0 3px rgba(103, 216, 223, .1); }
+    button { border: 0; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .58; }
+    .primary-button, .secondary-button, .logout-button {
+      min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 0 14px; border-radius: 10px; font-size: 12px; font-weight: 750; transition: .18s ease;
+    }
+    .primary-button { width: 100%; min-height: 44px; color: #062329; background: var(--cyan); }
+    .primary-button:hover:not(:disabled) { background: #91edf0; transform: translateY(-1px); }
+    .secondary-button { border: 1px solid var(--border); color: #d3e2ea; background: rgba(159, 199, 222, .05); }
+    .secondary-button:hover:not(:disabled), .logout-button:hover:not(:disabled) { border-color: rgba(103, 216, 223, .36); background: rgba(103, 216, 223, .08); }
+    .logout-button { border: 1px solid rgba(255, 148, 148, .18); color: #efb4b4; background: rgba(255, 148, 148, .04); }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 28px 0 30px; }
+    .metric { min-height: 122px; padding: 19px; border: 1px solid var(--border); border-radius: 16px; background: rgba(12, 32, 48, .77); }
+    .metric-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 11px; font-weight: 650; }
+    .metric-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; color: var(--cyan); background: rgba(103, 216, 223, .1); }
+    .metric-value { display: block; margin-top: 13px; font-size: 28px; font-weight: 750; letter-spacing: -.04em; }
+    .metric-note { margin: 2px 0 0; color: #7f98a8; font-size: 10px; }
+    .results { overflow: hidden; }
+    .results-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; padding: 22px 23px 18px; }
+    .results-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+    .results-heading p { margin: 6px 0 0; color: var(--muted); font-size: 11px; }
+    .results-actions { display: flex; align-items: center; gap: 9px; }
+    .filters { display: flex; align-items: center; gap: 5px; padding: 4px; border: 1px solid var(--border); border-radius: 11px; background: rgba(3, 15, 24, .38); }
+    .filter-button { min-height: 30px; padding: 0 10px; border-radius: 8px; color: var(--muted); background: transparent; font-size: 11px; font-weight: 700; }
+    .filter-button[aria-pressed="true"] { color: #dffbfc; background: rgba(103, 216, 223, .14); }
+    .search-wrap { position: relative; width: min(245px, 29vw); }
+    .search-wrap svg { position: absolute; top: 50%; left: 11px; color: #8299a8; transform: translateY(-50%); pointer-events: none; }
+    .search-wrap input { min-height: 39px; padding-left: 34px; font-size: 11px; }
+    .submission-count { padding: 0 23px 12px; color: #7f98a8; font-size: 10px; }
+    #submissions { padding: 0 14px 14px; }
+    .submission { margin-top: 8px; overflow: hidden; border: 1px solid rgba(159, 199, 222, .1); border-radius: 13px; background: rgba(4, 18, 28, .42); }
+    .submission[open] { border-color: rgba(103, 216, 223, .24); background: rgba(4, 18, 28, .6); }
+    .submission summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 70px; padding: 13px 15px; cursor: pointer; list-style: none; }
+    .submission summary::-webkit-details-marker { display: none; }
+    .submission-main { display: flex; min-width: 0; align-items: center; gap: 12px; }
+    .assessment-icon { width: 37px; height: 37px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 11px; color: var(--cyan); background: rgba(103, 216, 223, .1); }
+    .assessment-icon.posttest { color: #b6a2ff; background: rgba(153, 126, 255, .12); }
+    .participant { display: block; overflow: hidden; color: #e6f0f5; font-size: 12px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+    .submission-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 5px; color: #839aa9; font-size: 10px; }
+    .school-meta { color: #add9df; font-weight: 650; }
+    .submission-side { display: flex; align-items: center; gap: 12px; }
+    .assessment-badge { padding: 6px 8px; border-radius: 7px; color: #9de7e8; background: rgba(103, 216, 223, .09); font-size: 9px; font-weight: 750; white-space: nowrap; }
+    .assessment-badge.posttest { color: #c6baff; background: rgba(153, 126, 255, .1); }
+    .score-badge { min-width: 69px; color: #bcebd2; font-size: 11px; font-weight: 750; text-align: right; white-space: nowrap; }
+    .chevron { color: #718999; transition: transform .18s ease; }
+    details[open] .chevron { transform: rotate(180deg); }
+    .submission-body { padding: 2px 16px 18px 63px; }
+    .answers { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .answer-item { padding: 12px 13px; border: 1px solid rgba(159, 199, 222, .09); border-radius: 10px; background: rgba(14, 37, 53, .58); }
+    .question-line { margin: 0; color: #d8e6ed; font-size: 11px; font-weight: 650; line-height: 1.6; }
+    .question-number { display: inline-block; margin-right: 5px; color: #7e9aaa; font-size: 10px; }
+    .answer-line, .key-line, .explanation-line { margin: 7px 0 0; font-size: 10px; line-height: 1.6; }
+    .answer-line { color: #9fe2c1; }
+    .key-line { color: #c0b3ff; }
+    .explanation-line { color: #91aaba; }
+    .empty-state { display: grid; justify-items: center; gap: 9px; padding: 42px 18px; color: var(--muted); text-align: center; }
+    .empty-state strong { color: #dce8ee; font-size: 13px; }
+    .empty-state p { margin: 0; font-size: 11px; }
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 18px 4px 0; color: #6f8796; font-size: 10px; }
+    @media (max-width: 760px) {
+      .topbar { height: 64px; padding: 0 20px; }
+      main { width: min(100% - 32px, 620px); padding-top: 36px; }
+      .hero { align-items: start; flex-direction: column; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 22px 0; }
+      .metric { min-height: 105px; padding: 15px; }
+      .results-heading { align-items: start; flex-direction: column; padding: 19px 17px 14px; }
+      .results-actions { width: 100%; flex-wrap: wrap; }
+      .search-wrap { width: 100%; order: 2; }
+      .filters { flex: 1; }
+      .filter-button { flex: 1; padding: 0 7px; font-size: 10px; white-space: nowrap; }
+      .submission-count { padding: 0 17px 10px; }
+      #submissions { padding: 0 9px 9px; }
+      .submission summary { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 12px 10px; }
+      .submission-main { gap: 8px; }
+      .assessment-icon { width: 32px; height: 32px; }
+      .submission-side { gap: 7px; }
+      .score-badge { min-width: auto; font-size: 10px; }
+      .submission-body { padding: 2px 10px 12px; }
+      footer { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 420px) {
+      .brand-name { font-size: 12px; }
+      .brand-name small { font-size: 9px; }
+      .topbar-link { padding: 8px 9px; font-size: 10px; }
+      main { width: calc(100% - 24px); }
+      .submission-meta { gap: 4px 7px; font-size: 9px; }
+      .assessment-badge { padding: 5px 6px; font-size: 8px; }
+      .submission summary { min-height: 64px; }
+      .chevron { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Ecoseaverse beranda">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 13.2c3.1-4.9 6.5-7.3 10.1-7.3 3.2 0 5.7 1.6 7.9 4.7-2.8 4.5-6.1 6.8-9.9 6.8-3.1 0-5.8-1.4-8.1-4.2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 15.4c1.2-1.4 2.7-2.1 4.5-2.1 2.4 0 4.4 1.1 6 3.2M12.1 6.1c.1 2-.4 3.8-1.6 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </span>
+      <span class="brand-name">ECOSEAVERSE<small>ADMIN CONSOLE</small></span>
+    </a>
+    <a class="topbar-link" href="/">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 18-6-6 6-6M8 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Kembali ke game
+    </a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Pusat data pembelajaran</p>
+        <h1>Ruang kendali evaluasi</h1>
+        <p class="hero-copy">Pantau jawaban peserta dan hasil pembelajaran Bab 6. Pre-test disimpan tanpa nilai; nilai post-test dihitung dan direkam oleh server.</p>
+      </div>
+      <span class="secure-pill"><span class="secure-dot" aria-hidden="true"></span>Area admin terlindungi</span>
+    </section>
+
+    <p id="admin-status" class="status" role="status" aria-live="polite"></p>
+
+    <section id="login-panel" class="panel login-panel hidden" aria-labelledby="login-title">
+      <span class="login-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </span>
+      <h2 id="login-title">Masuk ke dashboard</h2>
+      <p id="setup-message"></p>
+      <form id="login-form">
+        <label for="admin-password">Password admin
+          <input id="admin-password" type="password" autocomplete="current-password" placeholder="Masukkan password admin" required>
+        </label>
+        <button class="primary-button" type="submit">
+          Masuk dengan aman
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+    </section>
+
+    <section id="dashboard" class="hidden" aria-labelledby="dashboard-title">
+      <h2 id="dashboard-title" class="hidden">Ringkasan evaluasi</h2>
+      <div class="metrics" aria-label="Ringkasan jumlah evaluasi">
+        <article class="metric">
+          <div class="metric-top"><span>Total pengiriman</span><span class="metric-icon" aria-hidden="true">↗</span></div>
+          <strong class="metric-value" id="total-count">—</strong><p class="metric-note">Data terbaru yang tersedia</p>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span>Pre-test</span><span class="metric-icon" aria-hidden="true">◷</span></div>
+          <strong class="metric-value" id="pretest-count">—</strong><p class="metric-note">Jawaban awal · tanpa nilai</p>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span>Post-test</span><span class="metric-icon" aria-hidden="true">✓</span></div>
+          <strong class="metric-value" id="posttest-count">—</strong><p class="metric-note">Jawaban evaluasi akhir</p>
+        </article>
+        <article class="metric">
+          <div class="metric-top"><span>Rata-rata post-test</span><span class="metric-icon" aria-hidden="true">%</span></div>
+          <strong class="metric-value" id="average-score">—</strong><p class="metric-note">Dari hasil yang tersimpan</p>
+        </article>
+      </div>
+
+      <section class="panel results" aria-labelledby="results-title">
+        <div class="results-heading">
+          <div>
+            <h2 id="results-title">Hasil peserta</h2>
+            <p>Pengiriman terbaru ditampilkan lebih dahulu. Pilih peserta untuk melihat jawaban.</p>
+          </div>
+          <div class="results-actions">
+            <div class="filters" role="group" aria-label="Filter jenis evaluasi">
+              <button class="filter-button" type="button" data-filter="all" aria-pressed="true">Semua</button>
+              <button class="filter-button" type="button" data-filter="pretest" aria-pressed="false">Pre-test</button>
+              <button class="filter-button" type="button" data-filter="posttest" aria-pressed="false">Post-test</button>
+            </div>
+            <label class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <input id="submission-search" type="search" placeholder="Cari sekolah atau siswa..." aria-label="Cari nama sekolah atau siswa">
+            </label>
+            <button type="button" id="refresh-button" class="secondary-button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4.6 9a7.5 7.5 0 0 1 12.7-2L20 12m-16 5v-5h5m10.4 3a7.5 7.5 0 0 1-12.7 2L4 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Muat ulang
+            </button>
+            <button type="button" id="logout-button" class="logout-button">Keluar</button>
+          </div>
+        </div>
+        <p id="submission-count" class="submission-count" aria-live="polite">Memuat data...</p>
+        <div id="submissions"></div>
+      </section>
+    </section>
+
+    <footer>
+      <span>Ecoseaverse · Administrasi evaluasi pembelajaran</span>
+      <span>Data peserta hanya dapat dilihat setelah admin masuk.</span>
+    </footer>
+  </main>
+  <script type="module" src="/admin.js"></script>
+</body>
+</html>
