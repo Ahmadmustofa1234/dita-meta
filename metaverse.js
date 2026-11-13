@@ -4220,7 +4220,7 @@ function animate() {
     const delta = Math.min((time - prevTime) / 1000, 0.1);
 
     // Fokuskan GPU ke laboratorium atau modul materi dan hentikan render 3D saat overlay aktif.
-    if (!clamModal.classList.contains('hidden') || (typeof isReadingMissionMaterial !== 'undefined' && isReadingMissionMaterial)) {
+    if (!clamModal.classList.contains('hidden') || isReadingMissionMaterial()) {
         prevTime = time;
         return;
     }
