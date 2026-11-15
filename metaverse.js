@@ -3577,9 +3577,22 @@ function updateMissionGuide() {
     }
 }
 
+let aiAutoCollapseTimer = null;
 function showAiMessage(text, useVoice = true) {
     document.getElementById('ai-text').innerText = text;
-    document.getElementById('ai-bubble').classList.remove('collapsed');
+    const bubble = document.getElementById('ai-bubble');
+    if (bubble) {
+        // Di HP, jangan buka otomatis untuk pesan status pasif agar layar 3D tetap lega
+        if (!isMobile || useVoice) {
+            bubble.classList.remove('collapsed');
+            if (isMobile) {
+                if (aiAutoCollapseTimer) clearTimeout(aiAutoCollapseTimer);
+                aiAutoCollapseTimer = setTimeout(() => {
+                    bubble.classList.add('collapsed');
+                }, 4500);
+            }
+        }
+    }
 
     const ping = document.querySelector('.ai-ping');
     if (ping) {
@@ -3592,6 +3605,10 @@ function showAiMessage(text, useVoice = true) {
     }
 }
 window.showAiMessage = showAiMessage;
+
+if (isMobile) {
+    document.getElementById('ai-bubble')?.classList.add('collapsed');
+}
 
 document.getElementById('ai-close-btn').addEventListener('click', () => {
     document.getElementById('ai-bubble').classList.add('collapsed');
@@ -4337,33 +4354,38 @@ function animate() {
         if (viewFeaturesState.bioScanner) {
             const scannerContainer = document.getElementById('bio-scanner-container');
             if (scannerContainer && Math.floor(time) % 2 === 0) {
-                let htmlStr = '';
                 const halfW = window.innerWidth / 2;
                 const halfH = window.innerHeight / 2;
                 const tempVec = new THREE.Vector3();
+                const maxBioDist = isMobile ? 18 : 38;
+                const visibleLabels = [];
 
                 bioScannerTargets.forEach((t) => {
                     tempVec.copy(t.pos);
                     const dist = camera.position.distanceTo(tempVec);
-                    if (dist > 38) return; // Hanya tampilkan jika dalam radius 38 meter
+                    if (dist > maxBioDist) return;
 
                     tempVec.project(camera);
-                    // Pastikan objek berada di depan kamera (z < 1)
                     if (tempVec.z < 1) {
                         const screenX = (tempVec.x * halfW) + halfW;
                         const screenY = -(tempVec.y * halfH) + halfH;
-                        // Pastikan masih di dalam layar
                         if (screenX > 10 && screenX < window.innerWidth - 10 && screenY > 10 && screenY < window.innerHeight - 10) {
-                            htmlStr += `
-                                <div class="bio-label-3d" style="left:${screenX}px; top:${screenY - 24}px;">
-                                    <i class="fa-solid fa-barcode"></i>
-                                    <span><strong>${t.name}</strong> <em>(${t.latin})</em></span>
-                                </div>
-                            `;
+                            visibleLabels.push({ t, dist, screenX, screenY });
                         }
                     }
                 });
-                scannerContainer.innerHTML = htmlStr;
+
+                if (isMobile && visibleLabels.length > 2) {
+                    visibleLabels.sort((a, b) => a.dist - b.dist);
+                    visibleLabels.length = 2;
+                }
+
+                scannerContainer.innerHTML = visibleLabels.map(({ t, screenX, screenY }) => `
+                    <div class="bio-label-3d" style="left:${screenX}px; top:${screenY - 24}px;">
+                        <i class="fa-solid fa-barcode"></i>
+                        <span><strong>${t.name}</strong> <em>(${t.latin})</em></span>
+                    </div>
+                `).join('');
             }
         }
 

@@ -3764,14 +3764,39 @@
     left: max(16px, env(safe-area-inset-left));
   }
 
-  /* Petunjuk naik/menyelam tidak dibutuhkan di layar sentuh karena tombol panah sudah terlihat jelas */
-  body.touch-layout .dive-prompt {
+  /* Petunjuk keyboard tidak dibutuhkan di layar sentuh karena tombol aksi sudah terlihat jelas */
+  body.touch-layout .dive-prompt,
+  body.touch-layout .zone-prompt,
+  body.is-mobile-device .dive-prompt,
+  body.is-mobile-device .zone-prompt {
     display: none !important;
   }
 
-  /* AI Guardian tidak melebar menimpa kolom tombol kanan */
-  body.touch-layout .ai-guardian .ai-bubble {
-    max-width: min(250px, calc(100vw - 215px));
+  /* AI Guardian lebih ringkas di HP agar tidak menutupi dunia 3D */
+  body.touch-layout .ai-guardian .ai-bubble,
+  body.is-mobile-device .ai-guardian .ai-bubble {
+    max-width: min(220px, calc(100vw - 240px));
+    padding: 8px 10px;
+    font-size: 0.72rem;
+  }
+
+  body.is-mobile-device .bio-label-3d {
+    font-size: 0.65rem;
+    padding: 3px 7px;
+    gap: 4px;
+    background: rgba(5, 18, 36, 0.72);
+  }
+
+  @media (max-height: 500px) and (orientation: landscape) {
+    body.is-mobile-device .hud-stat {
+      padding: 4px 6px;
+      min-width: 38px;
+    }
+    body.is-mobile-device .ai-guardian {
+      bottom: auto;
+      top: 56px;
+      left: 12px;
+    }
   }
 
   @media (max-width: 600px) {
