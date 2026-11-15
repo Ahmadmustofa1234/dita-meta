@@ -102,6 +102,13 @@ function renderSubmissions() {
         identity.append(participant, meta);
         main.append(icon, identity);
 
+        const totalCount = questions.length || submission.total || submission.answers.length;
+        const computedCorrect = questions.length
+            ? submission.answers.reduce((acc, ans, idx) => acc + (questions[idx]?.answer === ans ? 1 : 0), 0)
+            : submission.correct;
+        const hasScore = Number.isInteger(computedCorrect) && totalCount > 0;
+        const score100 = hasScore ? Math.round((computedCorrect / totalCount) * 100) : submission.percent;
+
         const side = document.createElement('span');
         side.className = 'submission-side';
         const badge = document.createElement('span');
@@ -110,7 +117,7 @@ function renderSubmissions() {
         side.appendChild(badge);
         const score = document.createElement('span');
         score.className = 'score-badge';
-        score.textContent = isPosttest ? `${submission.correct}/${submission.total} · ${submission.percent}%` : 'Tanpa nilai';
+        score.textContent = hasScore ? `Benar ${computedCorrect}/${totalCount} · Nilai ${score100}` : 'Tanpa nilai';
         side.appendChild(score);
         const chevron = document.createElement('span');
         chevron.className = 'chevron';
@@ -139,8 +146,10 @@ function renderSubmissions() {
             prompt.appendChild(promptText);
             const chosen = document.createElement('p');
             chosen.className = 'answer-line';
-            chosen.textContent = `Jawaban peserta: ${String.fromCharCode(65 + answer)}. ${question?.options[answer] || 'Pilihan tidak tersedia'}`;
-            if (isPosttest && question) {
+            const isCorrectAnswer = question && question.answer === answer;
+            const statusMark = question ? (isCorrectAnswer ? ' (Benar)' : ' (Salah)') : '';
+            chosen.textContent = `Jawaban peserta: ${String.fromCharCode(65 + answer)}. ${question?.options[answer] || 'Pilihan tidak tersedia'}${statusMark}`;
+            if (question) {
                 const correctAnswer = document.createElement('p');
                 correctAnswer.className = 'key-line';
                 correctAnswer.textContent = `Kunci jawaban: ${String.fromCharCode(65 + question.answer)}. ${question.options[question.answer]}`;
