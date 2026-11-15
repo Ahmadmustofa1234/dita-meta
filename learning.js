@@ -384,9 +384,10 @@ export function createLearningUI({ state, onComplete, onChange, onOpen, onClose,
 
     function materialMarkup(config) {
         const chapter = chapterById(config.chapter);
+        const pagePrefix = `assets/materi-pages/subbab-${chapter.id.toLowerCase()}`;
         return `<p class="assessment-source">IPA Kelas VII · Bab 6${chapter.id} · hlm. ${chapter.pages}</p>
             <h4>${escapeHtml(chapter.title)}</h4>
-            <p class="assessment-source">Baca PDF materi langsung di aplikasi. Tidak perlu mengunduh file untuk melanjutkan misi.</p>
+            <p class="assessment-source">Baca buku materi langsung di aplikasi. Geser ke bawah untuk membaca atau gunakan tombol halaman.</p>
             <nav class="mission-pdf-navigation" aria-label="Navigasi halaman PDF">
                 <button type="button" data-pdf-page-step="-1" aria-label="Halaman sebelumnya" disabled>‹ Sebelumnya</button>
                 <span data-pdf-page-label aria-live="polite">Halaman 1 dari ${chapter.pdfPages}</span>
@@ -395,7 +396,9 @@ export function createLearningUI({ state, onComplete, onChange, onOpen, onClose,
                 <button type="button" data-pdf-fullscreen aria-label="Besarkan pembaca PDF ke layar penuh">⛶ Layar Penuh</button>
             </nav>
             <div class="mission-pdf-reader">
-                <iframe src="${escapeHtml(chapter.pdf)}#page=1&zoom=page-fit&toolbar=0" data-pdf-url="${escapeHtml(chapter.pdf)}" data-pdf-page="1" data-pdf-pages="${chapter.pdfPages}" title="PDF Subbab ${chapter.id}: ${escapeHtml(chapter.title)}" loading="eager"></iframe>
+                <div class="mission-pdf-image-wrap">
+                    <img class="mission-pdf-page-img" src="${escapeHtml(pagePrefix)}-p1.jpg" data-pdf-prefix="${escapeHtml(pagePrefix)}" data-pdf-page="1" data-pdf-pages="${chapter.pdfPages}" alt="Halaman 1 Subbab ${chapter.id}: ${escapeHtml(chapter.title)}" loading="eager">
+                </div>
                 <button type="button" class="mission-pdf-fullscreen-chat" data-open-material-chat><i class="fa-solid fa-comments"></i> Tanya EcoBot</button>
                 <button type="button" class="mission-pdf-exit-fullscreen" data-pdf-exit-fullscreen aria-label="Keluar dari layar penuh">× Keluar Layar Penuh</button>
             </div>`;
@@ -806,17 +809,20 @@ export function createLearningUI({ state, onComplete, onChange, onOpen, onClose,
 
         const button = event.target.closest('[data-pdf-page-step]');
         if (!button) return;
-        const reader = taskArea.querySelector('.mission-pdf-reader iframe');
+        const pageImg = taskArea.querySelector('.mission-pdf-page-img');
+        const pageWrap = taskArea.querySelector('.mission-pdf-image-wrap');
         const pageLabel = taskArea.querySelector('[data-pdf-page-label]');
-        if (!reader || !pageLabel) return;
+        if (!pageImg || !pageLabel) return;
 
-        const totalPages = Number(reader.dataset.pdfPages);
-        const currentPage = Number(reader.dataset.pdfPage);
+        const totalPages = Number(pageImg.dataset.pdfPages);
+        const currentPage = Number(pageImg.dataset.pdfPage);
         const nextPage = Math.min(totalPages, Math.max(1, currentPage + Number(button.dataset.pdfPageStep)));
         if (!Number.isInteger(totalPages) || !Number.isInteger(currentPage) || !Number.isInteger(nextPage) || nextPage === currentPage) return;
 
-        reader.dataset.pdfPage = String(nextPage);
-        reader.src = `${reader.dataset.pdfUrl}#page=${nextPage}&zoom=page-fit&toolbar=0`;
+        pageImg.dataset.pdfPage = String(nextPage);
+        pageImg.src = `${pageImg.dataset.pdfPrefix}-p${nextPage}.jpg`;
+        pageImg.alt = `Halaman ${nextPage} dari ${totalPages}`;
+        if (pageWrap) pageWrap.scrollTop = 0;
         pageLabel.textContent = `Halaman ${nextPage} dari ${totalPages}`;
         taskArea.querySelector('[data-pdf-page-step="-1"]').disabled = nextPage === 1;
         taskArea.querySelector('[data-pdf-page-step="1"]').disabled = nextPage === totalPages;

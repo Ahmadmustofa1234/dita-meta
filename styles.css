@@ -1227,7 +1227,7 @@
 
   .mission-popup.pdf-reading .mission-pdf-reader {
     height: auto;
-    min-height: 0;
+    min-height: 240px;
   }
 
   .mission-pdf-reader iframe {
@@ -1236,6 +1236,27 @@
     width: 100%;
     height: 100%;
     border: 0;
+  }
+
+  .mission-pdf-image-wrap {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #0f172a;
+    padding: 8px;
+  }
+
+  .mission-pdf-page-img {
+    display: block;
+    width: 100%;
+    max-width: 780px;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   }
 
   .mission-pdf-reader:fullscreen {
@@ -1923,6 +1944,69 @@
   .mission-popup.pdf-reading .popup-close-btn {
     top: 10px;
     right: 12px;
+  }
+
+  @media (max-height: 520px) {
+    .mission-popup.pdf-reading .mission-popup-inner {
+      display: block;
+      width: 98vw;
+      height: 96dvh;
+      max-height: 96dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mission-popup.pdf-reading .popup-header {
+      padding: 8px 46px 6px 14px;
+    }
+
+    .mission-popup.pdf-reading .popup-header h2 {
+      font-size: 0.98rem;
+      margin-bottom: 0;
+    }
+
+    .mission-popup.pdf-reading .popup-task {
+      display: block;
+      overflow: visible;
+      padding: 6px 14px 8px;
+    }
+
+    .mission-popup.pdf-reading .popup-task > h3 {
+      font-size: 0.92rem;
+      margin-bottom: 2px;
+    }
+
+    .mission-popup.pdf-reading #popup-task-area {
+      display: block;
+    }
+
+    .mission-popup.pdf-reading .assessment-source,
+    .mission-popup.pdf-reading .popup-task h4 {
+      margin: 2px 0;
+      font-size: 0.74rem;
+    }
+
+    .mission-popup.pdf-reading .mission-pdf-navigation {
+      gap: 6px;
+      margin: 6px 0;
+    }
+
+    .mission-popup.pdf-reading .mission-pdf-navigation button,
+    .mission-popup.pdf-reading .mission-pdf-navigation .btn-secondary {
+      min-height: 32px;
+      padding: 4px 10px;
+      font-size: 0.74rem;
+    }
+
+    .mission-popup.pdf-reading .mission-pdf-reader {
+      display: flex;
+      height: 260px;
+      min-height: 260px;
+    }
+
+    .mission-popup.pdf-reading .popup-footer {
+      padding: 8px 14px;
+    }
   }
   
   .mission-popup-inner {

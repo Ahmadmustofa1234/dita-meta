@@ -42,4 +42,9 @@ const vendorSrc = path.join(root, 'vendor', 'three');
 const vendorDst = path.join(outDir, 'vendor', 'three');
 fs.cpSync(vendorSrc, vendorDst, { recursive: true });
 
-console.log(`Bundle offline Android (www/) siap: ${files.length} file + vendor/three.`);
+// Salin seluruh halaman buku (assets/materi-pages) agar buku materi tampil natif di Android WebView
+const pagesSrc = path.join(root, 'assets', 'materi-pages');
+const pagesDst = path.join(outDir, 'assets', 'materi-pages');
+fs.cpSync(pagesSrc, pagesDst, { recursive: true });
+
+console.log(`Bundle offline Android (www/) siap: ${files.length} file + vendor/three + materi-pages.`);

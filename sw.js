@@ -23,7 +23,12 @@ const APP_SHELL_ASSETS = [
   './assets/materi-pdf/subbab-b.pdf',
   './assets/materi-pdf/subbab-c.pdf',
   './assets/materi-pdf/subbab-d.pdf',
-  './assets/materi-pdf/subbab-e.pdf'
+  './assets/materi-pdf/subbab-e.pdf',
+  ...Array.from({ length: 3 }, (_, i) => `./assets/materi-pages/subbab-a-p${i + 1}.jpg`),
+  ...Array.from({ length: 11 }, (_, i) => `./assets/materi-pages/subbab-b-p${i + 1}.jpg`),
+  ...Array.from({ length: 4 }, (_, i) => `./assets/materi-pages/subbab-c-p${i + 1}.jpg`),
+  ...Array.from({ length: 4 }, (_, i) => `./assets/materi-pages/subbab-d-p${i + 1}.jpg`),
+  ...Array.from({ length: 5 }, (_, i) => `./assets/materi-pages/subbab-e-p${i + 1}.jpg`)
 ];
 
 self.addEventListener('install', (event) => {
