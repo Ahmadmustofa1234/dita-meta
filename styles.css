@@ -4606,8 +4606,50 @@
     }
 
     .start-content {
-      max-height: 92dvh;
-      padding: 14px 18px;
+      max-height: 94dvh;
+      padding: 12px 18px;
+    }
+
+    .start-logo {
+      margin-bottom: 6px;
+    }
+
+    .start-logo i {
+      font-size: 1.45rem;
+      margin-bottom: 2px;
+    }
+
+    .start-logo h1 {
+      font-size: 1.55rem;
+    }
+
+    .start-subtitle {
+      font-size: 0.78rem;
+    }
+
+    .participant-login {
+      padding: 8px 12px;
+      margin-bottom: 10px;
+    }
+
+    .participant-login-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .participant-login p {
+      display: none;
+    }
+
+    .mobile-controls-info,
+    .start-hint {
+      display: none !important;
+    }
+
+    .btn-start {
+      padding: 10px 26px;
+      font-size: 0.95rem;
     }
   }
 

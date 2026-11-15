@@ -339,6 +339,7 @@ function buildProgressSnapshot() {
 
 function syncProgressToServerNow() {
     if (!state.participantId || !state.schoolName || !state.participantName) return;
+    if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.()) return;
     if (typeof navigator !== 'undefined' && !navigator.onLine) return;
     const payload = {
         schoolName: state.schoolName,
@@ -3660,17 +3661,23 @@ const learning = createLearningUI({
 });
 
 async function fetchRemoteParticipantProgress(schoolName, name) {
+    if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.()) return null;
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 4000) : null;
     try {
         const params = new URLSearchParams({
             schoolName: normalizeParticipantField(schoolName),
             participantName: normalizeParticipantField(name)
         });
-        const response = await fetch(`/api/participant-progress?${params.toString()}`);
+        const response = await fetch(`/api/participant-progress?${params.toString()}`, controller ? { signal: controller.signal } : undefined);
         if (!response.ok) return null;
         const data = await response.json();
         return data && data.found && data.progress ? data.progress : null;
     } catch {
         return null;
+    } finally {
+        if (timer) clearTimeout(timer);
     }
 }
 

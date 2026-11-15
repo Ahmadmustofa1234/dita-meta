@@ -211,6 +211,21 @@ export function initChatbot() {
             return;
         }
 
+        const isNativeCapacitor = typeof window !== 'undefined' && Boolean(window.Capacitor?.isNativePlatform?.());
+        if (isNativeCapacitor || (typeof navigator !== 'undefined' && !navigator.onLine)) {
+            typingEl.remove();
+            const offlineReply = generateOfflineMarineAnswer(query);
+            appendMessage('bot', offlineReply);
+            chatState.history.push({ role: 'user', content: query });
+            chatState.history.push({ role: 'assistant', content: offlineReply });
+            chatState.isSending = false;
+            if (submitBtn) submitBtn.disabled = false;
+            chatInput.focus();
+            return;
+        }
+
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timer = controller ? setTimeout(() => controller.abort(), 7000) : null;
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
@@ -218,7 +233,8 @@ export function initChatbot() {
                 body: JSON.stringify({
                     message: query,
                     history: chatState.history.slice(-6)
-                })
+                }),
+                ...(controller ? { signal: controller.signal } : {})
             });
 
             typingEl.remove();
@@ -238,6 +254,7 @@ export function initChatbot() {
             const offlineReply = generateOfflineMarineAnswer(query);
             appendMessage('bot', offlineReply);
         } finally {
+            if (timer) clearTimeout(timer);
             chatState.isSending = false;
             if (submitBtn) submitBtn.disabled = false;
             chatInput.focus();

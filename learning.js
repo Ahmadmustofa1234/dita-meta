@@ -85,11 +85,14 @@ async function submitAssessmentWithOfflineFallback(payload) {
         queueOfflineSubmission(payload);
         return { offlineQueued: true };
     }
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 6000) : null;
     try {
         const response = await fetch('/api/mission-assessment-submissions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            ...(controller ? { signal: controller.signal } : {})
         });
         if (response.status >= 500 || response.status === 404 || response.status === 405) {
             queueOfflineSubmission(payload);
@@ -101,11 +104,13 @@ async function submitAssessmentWithOfflineFallback(payload) {
         }
         return { offlineQueued: false, saved };
     } catch (error) {
-        if (error instanceof TypeError || (typeof navigator !== 'undefined' && !navigator.onLine)) {
+        if (error?.name === 'AbortError' || error instanceof TypeError || (typeof navigator !== 'undefined' && !navigator.onLine)) {
             queueOfflineSubmission(payload);
             return { offlineQueued: true };
         }
         throw error;
+    } finally {
+        if (timer) clearTimeout(timer);
     }
 }
 
