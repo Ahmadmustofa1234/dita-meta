@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ecoseaverse-v1';
+const CACHE_VERSION = 'ecoseaverse-v2-20261116';
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
