@@ -3489,7 +3489,10 @@ function teleportToMission(index) {
     if (promptNameEl) promptNameEl.innerText = `[ MISI ${index + 1} ] ${m.title}`;
     const zonePromptEl = document.getElementById('zone-prompt');
     if (zonePromptEl) zonePromptEl.classList.remove('hidden');
-    showAiMessage(`🎯 Tiba di kawasan Misi ${index + 1}: ${m.title}. Tekan [E] atau klik tombol 'Masuk Misi' untuk mulai!`, true);
+    const enterHint = isMobile
+        ? `Ketuk di sini atau tombol biru untuk mulai!`
+        : `Tekan [E] atau klik tombol 'Masuk Misi' untuk mulai!`;
+    showAiMessage(`🎯 Tiba di kawasan Misi ${index + 1}: ${m.title}. ${enterHint}`, true);
 }
 window.teleportToMission = teleportToMission;
 
@@ -3609,6 +3612,8 @@ window.showAiMessage = showAiMessage;
 
 if (isMobile) {
     document.getElementById('ai-bubble')?.classList.add('collapsed');
+    const zonePromptTextEl = document.getElementById('zone-prompt-text');
+    if (zonePromptTextEl) zonePromptTextEl.textContent = 'Ketuk di sini untuk masuk misi';
 }
 
 document.getElementById('ai-close-btn').addEventListener('click', () => {
@@ -4559,7 +4564,9 @@ function animate() {
                     btnEnter.classList.add('is-ready');
                     if (spanEl) spanEl.innerText = 'Masuk Misi';
                     if (iconEl) iconEl.className = 'fa-solid fa-arrow-right-to-bracket';
-                    btnEnter.title = `Tekan [E] atau klik untuk masuk Misi ${nextId + 1}`;
+                    btnEnter.title = isMobile
+                        ? `Ketuk untuk masuk Misi ${nextId + 1}`
+                        : `Tekan [E] atau klik untuk masuk Misi ${nextId + 1}`;
                 } else {
                     btnEnter.classList.remove('is-ready');
                     if (spanEl) spanEl.innerText = 'Cari Lokasi';
